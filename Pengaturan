@@ -1,0 +1,805 @@
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Pengaturan extends CI_Controller
+{
+	 function __construct()
+	{
+		parent::__construct();
+
+		if($this->session->userdata('logged_in') == FALSE OR $this->session->userdata('level') != 'ppk'){
+			redirect('auth', 'refresh');
+		}
+
+		$this->load->library(array('pagination','upload'));
+		$this->load->model(array('Pengaturan_model','General_model'));
+		$this->menu = 'ppk/menu';
+		$this->open = array('','','','','','','','','','','open','');
+	}
+
+	function index(){
+		$this->masuk_kuliah();
+	}
+
+	function masuk_kuliah()
+	{
+		$data['title']      = 'Pengaturan';
+		$data['pagetitle']  = 'Masuk Kuliah';
+		$data['menu']       = $this->menu;
+		$data['open']       = $this->open;
+
+		$data['tgl_masuk']	= $this->Pengaturan_model->get_masuk();
+		$data['content']    = 'ppk/pengaturan_masuk';
+
+		$data['p_css']  = array(
+			'libs/bootstrap-table/bootstrap-table.min.css',
+			'kosmo/styles/libs/bootstrap-table/bootstrap-table.min.css',
+			'libs/select2/css/select2.min.css',
+			'kosmo/styles/libs/select2/select2.min.css',
+		);
+		$data['p_js']   = array(
+			'libs/bootstrap-table/bootstrap-table.min.js',
+			'libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js',
+			'libs/bootstrap-table/extensions/export/bootstrap-table-export.min.js',
+			'libs/table-export/table-export.js',
+			'libs/select2/js/select2.min.js'
+		);
+
+		$this->load->view('main', $data);
+	}
+
+	function universitas()
+	{
+		$data['title']      = 'Pengaturan';
+		$data['pagetitle']  = 'Daftar Universitas';
+		$data['menu']       = $this->menu;
+		$data['open']       = $this->open;
+
+		$config = array(
+			array(
+				'field' => 'kode',
+				'label' => 'Kode',
+				'rules' => 'required|is_unique[ts_masters.code]|trim|xss_clean|strip_tags|'
+			),
+			array(
+				'field' => 'flag',
+				'label' => 'Lokasi',
+				'rules' => 'required|trim|xss_clean|strip_tags'
+			),
+			array(
+				'field' => 'name',
+				'label' => 'Nama Universitas',
+				'rules' => 'required|trim|xss_clean|strip_tags'
+			),
+			array(
+				'field' => 'description',
+				'label' => 'Deskripsi',
+				'rules' => 'required|trim|xss_clean|strip_tags'
+			)
+		);
+
+		$this->form_validation->set_message('required', 'Kolom harus diisi.');
+		$this->form_validation->set_message('is_unique', 'Kode sudah digunakan.');
+		$this->form_validation->set_error_delimiters('<span class="help-block">', '</span>');
+		$this->form_validation->set_rules($config);
+
+		if ($this->form_validation->run() == FALSE)
+		{
+
+		}else{
+			
+		}
+
+		$id = array('tgroup' => 'UNIV', 'flag'=>'2');
+		$jp = array('tgroup' => 'UNIV', 'flag'=>'1');
+
+		$data['univ_id']	= $this->Pengaturan_model->get_univ($id);
+		$data['univ_jp']	= $this->Pengaturan_model->get_univ($jp);
+
+		$data['content']    = 'ppk/pengaturan_univ';
+
+		$data['p_css']  = array(
+			'libs/bootstrap-table/bootstrap-table.min.css',
+			'kosmo/styles/libs/bootstrap-table/bootstrap-table.min.css',
+			'libs/select2/css/select2.min.css',
+			'kosmo/styles/libs/select2/select2.min.css',
+		);
+		$data['p_js']   = array(
+			'libs/bootstrap-table/bootstrap-table.min.js',
+			'libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js',
+			'libs/bootstrap-table/extensions/export/bootstrap-table-export.min.js',
+			'libs/table-export/table-export.js',
+			'libs/select2/js/select2.min.js'
+		);
+
+		$this->load->view('main', $data);
+	}
+
+	function prodi()
+	{
+		$data['title']      = 'Pengaturan';
+		$data['pagetitle']  = 'Daftar Program Studi';
+		$data['menu']       = $this->menu;
+		$data['open']       = $this->open;
+
+		$config = array(
+			array(
+				'field' => 'kode',
+				'label' => 'Kode',
+				'rules' => 'required|is_unique[ts_masters.code]|trim|xss_clean|strip_tags|'
+			),
+			array(
+				'field' => 'flag',
+				'label' => 'Lokasi',
+				'rules' => 'required|trim|xss_clean|strip_tags'
+			),
+			array(
+				'field' => 'name',
+				'label' => 'Nama Universitas',
+				'rules' => 'required|trim|xss_clean|strip_tags'
+			),
+			array(
+				'field' => 'description',
+				'label' => 'Deskripsi',
+				'rules' => 'required|trim|xss_clean|strip_tags'
+			)
+		);
+
+		$this->form_validation->set_message('required', 'Kolom harus diisi.');
+		$this->form_validation->set_message('is_unique', 'Kode sudah digunakan.');
+		$this->form_validation->set_error_delimiters('<span class="help-block">', '</span>');
+		$this->form_validation->set_rules($config);
+
+		if ($this->form_validation->run() == FALSE)
+		{
+
+		}else{
+			echo 'FORM TRUE';
+		}
+
+		$id = array('tgroup' => 'JURSN', 'flag'=>'1');
+		$jp = array('tgroup' => 'JURSN', 'flag'=>'2');
+
+		$data['prodi_id']	= $this->Pengaturan_model->get_prodi($id);
+		$data['prodi_jp']	= $this->Pengaturan_model->get_prodi($jp);
+		$data['content']    = 'ppk/pengaturan_prodi';
+
+		$data['p_css']  = array(
+			'libs/bootstrap-table/bootstrap-table.min.css',
+			'kosmo/styles/libs/bootstrap-table/bootstrap-table.min.css',
+			'libs/select2/css/select2.min.css',
+			'kosmo/styles/libs/select2/select2.min.css',
+		);
+		$data['p_js']   = array(
+			'libs/bootstrap-table/bootstrap-table.min.js',
+			'libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js',
+			'libs/bootstrap-table/extensions/export/bootstrap-table-export.min.js',
+			'libs/table-export/table-export.js',
+			'libs/select2/js/select2.min.js'
+		);
+
+		$this->load->view('main', $data);
+	}
+	function update_masuk() {
+		if(isset($_POST['submit'])) {
+			$config = array(
+				array(
+					'field' => 'diklat',
+					'label' => 'Diklat',
+					'rules' => 'required|trim|xss_clean|strip_tags'
+				),
+				array(
+					'field' => 'prodi',
+					'label' => 'Prodi',
+					'rules' => 'required|trim|xss_clean|strip_tags'
+				)
+			);
+			$this->form_validation->set_message('required', 'Kolom %s harus diisi.');
+			$this->form_validation->set_error_delimiters('<div class="alert alert-danger ks-solid-light ks-active-border" role="alert">', '</div>');
+			$this->form_validation->set_rules($config);
+
+			if ($this->form_validation->run() == FALSE)
+			{
+				$this->session->set_flashdata('errors','Gagal menyimpan data masuk.');
+				$this->masuk_kuliah();
+			} else{
+				$program = $this->Pengaturan_model->get_program("id_program='".$_POST['prodi']."'")->row();
+				$data = array(
+					'id_seleksi'=>$_POST['diklat'],
+					'id_program'=>$_POST['prodi'],
+					'id_univ'=>$program->id_univ,
+					'id_jur'=>$program->id_jur,
+					'tgl_masuk'=>date('Y-m-d',strtotime($_POST['tgl'].'-'.$_POST['bln'].'-'.$_POST['thn'])),
+					'date_created'=>date('Y-m-d H:i:s')
+				);
+				$cek = $this->Pengaturan_model->get_masuk(array('m.id_seleksi'=>$_POST['diklat'],'m.id_program'=>$_POST['prodi']))->row();
+				if(empty($cek)) {
+					$this->General_model->save_single('s_masuk_kuliah',$data);
+					// $this->Pengaturan_model->add_masuk($data);
+				} else {
+					$this->General_model->save_single('s_masuk_kuliah',$data,$cek->id);
+					// $this->session->set_flashdata('errors','Gagal menyimpan data masuk. Sudah ada data untuk Diklat dan Prodi yang dipilih.');
+					// $this->masuk_kuliah();
+				}
+				$this->session->set_flashdata('success','Data berhasil disimpan');
+				redirect ('ppk/pengaturan/masuk-kuliah','refresh');
+			}
+		}
+	}
+	function universitas_luar_negeri($id=null)
+	{
+		$data['title']      = 'Pengaturan';
+		$data['pagetitle']  = 'Daftar Universitas Luar Negeri';
+		$data['menu']       = $this->menu;
+		$data['open']       = $this->open;
+		if(isset($_POST['submit'])) {
+			$config = array(
+				// array(
+				// 	'field' => 'kode',
+				// 	'label' => 'Kode',
+				// 	'rules' => 'required|is_unique[s_univ_luarnegeri.kode]|trim|xss_clean|strip_tags|'
+				// ),
+				array(
+					'field' => 'zona',
+					'label' => 'Zona',
+					'rules' => 'required|trim|xss_clean|strip_tags'
+				),
+				array(
+					'field' => 'nama',
+					'label' => 'Nama Universitas',
+					'rules' => 'required|trim|xss_clean|strip_tags'
+				)
+			);
+
+			$this->form_validation->set_message('required', 'Kolom harus diisi.');
+			$this->form_validation->set_message('is_unique', 'Kode sudah digunakan.');
+			$this->form_validation->set_error_delimiters('<span class="help-block">', '</span>');
+			$this->form_validation->set_rules($config);
+
+			// var_dump($_POST); exit();
+			if($this->form_validation->run() == FALSE)
+			{
+				$this->session->set_flashdata('errors','Gagal menyimpan data masuk.');
+				// $this->universitas_luar_negeri();
+			} else {
+				// var_dump($_POST); exit();
+				$data = array(
+					'nama'=>$_POST['nama'],
+					'kode'=>$_POST['kode'],
+					'kota'=>$_POST['kota'],
+					'id_negara'=>$_POST['id_negara'],
+					'zona'=>$_POST['zona']
+				);
+				if(empty($_POST['id_univ'])) $this->General_model->save_single('s_univ_luarnegeri',$data);
+				else {
+					$this->General_model->save_single('s_univ_luarnegeri',$data,array('key'=>'id_univ','value'=>$_POST['id_univ']));
+				}
+				$this->session->set_flashdata('success','Data berhasil disimpan');
+				redirect ('ppk/pengaturan/universitas-luar-negeri','refresh');
+			}
+		}
+		if(!empty($id)) {
+			$data['key']	= $this->Pengaturan_model->get_univ_ln('id_univ='.$id)->row_array();
+		}
+		$data['univ_id']	= $this->Pengaturan_model->get_univ_ln();
+		// $data['univ_jp']	= $this->Pengaturan_model->get_univ($jp);
+
+		$data['content']    = 'ppk/pengaturan_univ_ln';
+
+		$data['p_css']  = array(
+			'libs/bootstrap-table/bootstrap-table.min.css',
+			'kosmo/styles/libs/bootstrap-table/bootstrap-table.min.css',
+			'libs/select2/css/select2.min.css',
+			'kosmo/styles/libs/select2/select2.min.css',
+		);
+		$data['p_js']   = array(
+			'libs/bootstrap-table/bootstrap-table.min.js',
+			'libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js',
+			'libs/bootstrap-table/extensions/export/bootstrap-table-export.min.js',
+			'libs/table-export/table-export.js',
+			'libs/select2/js/select2.min.js'
+		);
+
+		$this->load->view('main', $data);
+	}
+	function prodi_luar_negeri($id=null)
+	{
+		$data['title']      = 'Pengaturan';
+		$data['pagetitle']  = 'Daftar Program Studi Luar Negeri';
+		$data['menu']       = $this->menu;
+		$data['open']       = $this->open;
+		if(isset($_POST['submit'])) {
+			$config = array(
+				array(
+					'field' => 'nama_prodi',
+					'label' => 'Nama Prodi',
+					'rules' => 'required|trim|xss_clean|strip_tags'
+				)
+			);
+
+			$this->form_validation->set_message('required', 'Kolom harus diisi.');
+			$this->form_validation->set_message('is_unique', 'Kode sudah digunakan.');
+			$this->form_validation->set_error_delimiters('<span class="help-block">', '</span>');
+			$this->form_validation->set_rules($config);
+
+			// var_dump($_POST); exit();
+			if($this->form_validation->run() == FALSE)
+			{
+				$this->session->set_flashdata('errors','Gagal menyimpan data masuk.');
+				// $this->universitas_luar_negeri();
+			} else {
+				// var_dump($_POST); exit();
+				$data = array(
+					'nama_prodi'=>$_POST['nama_prodi'],
+					'id_univ'=>$_POST['id_univ']
+				);
+				if(empty($_POST['id_prodi'])) $this->General_model->save_single('s_prodi_luarnegeri',$data);
+				else {
+					$this->General_model->save_single('s_prodi_luarnegeri',$data,array('key'=>'id_prodi','value'=>$_POST['id_prodi']));
+				}
+				$this->session->set_flashdata('success','Data berhasil disimpan');
+				redirect ('ppk/pengaturan/prodi-luar-negeri','refresh');
+			}
+		}
+		if(!empty($id)) {
+			$data['key']	= $this->Pengaturan_model->get_prodi_ln('id_prodi='.$id)->row_array();
+		}
+		$data['univ_id']	= $this->Pengaturan_model->get_prodi_ln();
+		// $data['univ_jp']	= $this->Pengaturan_model->get_univ($jp);
+
+		$data['content']    = 'ppk/pengaturan_prodi_ln';
+
+		$data['p_css']  = array(
+			'libs/bootstrap-table/bootstrap-table.min.css',
+			'kosmo/styles/libs/bootstrap-table/bootstrap-table.min.css',
+			'libs/select2/css/select2.min.css',
+			'kosmo/styles/libs/select2/select2.min.css',
+		);
+		$data['p_js']   = array(
+			'libs/bootstrap-table/bootstrap-table.min.js',
+			'libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js',
+			'libs/bootstrap-table/extensions/export/bootstrap-table-export.min.js',
+			'libs/table-export/table-export.js',
+			'libs/select2/js/select2.min.js'
+		);
+
+		$this->load->view('main', $data);
+	}
+	function kurikulum($id=null)
+	{
+		$data['title']      = 'Pengaturan';
+		$data['pagetitle']  = 'Daftar Kurikulum';
+		$data['menu']       = $this->menu;
+		$data['open']       = $this->open;
+		if(isset($_POST['submit'])) {
+			$config = array(
+				// array(
+				// 	'field' => 'kode',
+				// 	'label' => 'Kode',
+				// 	'rules' => 'required|is_unique[s_univ_luarnegeri.kode]|trim|xss_clean|strip_tags|'
+				// ),
+				array(
+					'field' => 'zona',
+					'label' => 'Zona',
+					'rules' => 'required|trim|xss_clean|strip_tags'
+				),
+				array(
+					'field' => 'nama',
+					'label' => 'Nama Universitas',
+					'rules' => 'required|trim|xss_clean|strip_tags'
+				)
+			);
+
+			$this->form_validation->set_message('required', 'Kolom harus diisi.');
+			$this->form_validation->set_message('is_unique', 'Kode sudah digunakan.');
+			$this->form_validation->set_error_delimiters('<span class="help-block">', '</span>');
+			$this->form_validation->set_rules($config);
+
+			// var_dump($_POST); exit();
+			if($this->form_validation->run() == FALSE)
+			{
+				$this->session->set_flashdata('errors','Gagal menyimpan data masuk.');
+				// $this->universitas_luar_negeri();
+			} else {
+				// var_dump($_POST); exit();
+				$data = array(
+					'nama'=>$_POST['nama'],
+					'kode'=>$_POST['kode'],
+					'kota'=>$_POST['kota'],
+					'id_negara'=>$_POST['id_negara'],
+					'zona'=>$_POST['zona']
+				);
+				if(empty($_POST['id_univ'])) $this->General_model->save_single('s_univ_luarnegeri',$data);
+				else {
+					$this->General_model->save_single('s_univ_luarnegeri',$data,array('key'=>'id_univ','value'=>$_POST['id_univ']));
+				}
+				$this->session->set_flashdata('success','Data berhasil disimpan');
+				redirect ('ppk/pengaturan/universitas-luar-negeri','refresh');
+			}
+		}
+		if(!empty($id)) {
+			$data['key']	= $this->Pengaturan_model->get_univ_ln('id_univ='.$id)->row_array();
+		}
+		$data['univ_id']	= $this->Pengaturan_model->get_univ_ln();
+		// $data['univ_jp']	= $this->Pengaturan_model->get_univ($jp);
+
+		$data['content']    = 'ppk/pengaturan_univ_ln';
+
+		$data['p_css']  = array(
+			'libs/bootstrap-table/bootstrap-table.min.css',
+			'kosmo/styles/libs/bootstrap-table/bootstrap-table.min.css',
+			'libs/select2/css/select2.min.css',
+			'kosmo/styles/libs/select2/select2.min.css',
+		);
+		$data['p_js']   = array(
+			'libs/bootstrap-table/bootstrap-table.min.js',
+			'libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js',
+			'libs/bootstrap-table/extensions/export/bootstrap-table-export.min.js',
+			'libs/table-export/table-export.js',
+			'libs/select2/js/select2.min.js'
+		);
+
+		$this->load->view('main', $data);
+	}
+	public function update_kelulusan($id='')
+	{
+		$data['title']      = 'Data Kelulusan';
+		$data['pagetitle']  = 'Data Kelulusan Karyasiswa Gelar';
+		$data['menu']       = $this->menu;
+		$data['open']       = $this->open;
+		$user = $this->session->userdata('user');
+		$where = $formdata = array();
+		$this->db->where($where);
+		$this->db->order_by('tahun desc');
+		$data["karyasiswa"] = $this->db->get('view_peserta')->result();
+		
+		$data['key'] = $formdata;
+		if(!empty($id)) {
+			list($id_peserta,$id_seleksi,$id_datadiri) = explode('||', decodeURL($id));
+			$this->db->where(array(
+				'id_peserta'	=> $id_peserta,
+				'id_seleksi'	=> $id_seleksi,
+				'id_datadiri'	=> $id_datadiri
+			));
+			$formdata = $this->db->get('t_alumni')->row_array();
+			$data['key'] = $formdata;
+			$data['id_peserta'] = $id_peserta;
+			$data['id_seleksi'] = $id_seleksi;
+			$data['id_datadiri'] = $id_datadiri;
+			$this->db->select('nip,nama');
+			$this->db->where('id_datadiri',$id_datadiri);
+			$data['peserta'] = $this->db->get('t_datadiri')->row_array();
+		}
+
+		if(isset($_POST['submit'])) {
+			$this->db->where('id_datadiri',$_POST['id_datadiri']);
+			$datadiri = $this->db->get('t_datadiri')->row();
+			$nip = $datadiri->nip;
+			$sdata = array(
+				'tgl_lulus' 	=> date('Y-m-d',strtotime($_POST['tgl_lulus'])),
+				'sks'			=> $_POST['sks'],
+				'sks_linkage'	=> $_POST['sks_linkage'],
+				'ipk'			=> $_POST['ipk'],
+				'ipk_linkage'	=> $_POST['ipk_linkage'],
+				'judul_tesis'	=> $_POST['judul_tesis']
+			);
+			if(isset($_FILES) && !empty($_FILES['file_srtpengantar']['name'])) {
+				$ext = end((explode(".", $_FILES['file_srtpengantar']['name'])));
+				$file_srtpengantar = $nip."-SURATPENGANTAR.".$ext;
+				$this->upload->initialize($this->set_upload_conf($nip,$file_srtpengantar));
+				if(!$this->upload->do_upload('file_srtpengantar')) {
+					$q = $this->upload->display_errors('<span class="help-block">','</span>');
+					$this->session->set_flashdata('errors',$q);
+				} else {
+					$sdata['file_srtpengantar'] = $file_srtpengantar;
+				}
+			}
+			if(isset($_FILES) && !empty($_FILES['file_laptesis']['name'])) {
+				$ext = end((explode(".", $_FILES['file_laptesis']['name'])));
+				$file_laptesis = $nip."-LAPTESIS.".$ext;
+				$this->upload->initialize($this->set_upload_conf($nip,$file_laptesis));
+				if(!$this->upload->do_upload('file_laptesis')) {
+					$q = $this->upload->display_errors('<span class="help-block">','</span>');
+					$this->session->set_flashdata('errors',$q);
+				} else {
+					$sdata['file_laptesis'] = $file_laptesis;
+				}
+			}
+			if(isset($_FILES) && !empty($_FILES['file_laptesis']['name'])) {
+				$ext = end((explode(".", $_FILES['file_laptesis']['name'])));
+				$file_laptesis = $nip."-LAPTESIS.".$ext;
+				$this->upload->initialize($this->set_upload_conf($nip,$file_laptesis));
+				if(!$this->upload->do_upload('file_laptesis')) {
+					$q = $this->upload->display_errors('<span class="help-block">','</span>');
+					$this->session->set_flashdata('errors',$q);
+				} else {
+					$sdata['file_laptesis'] = $file_laptesis;
+				}
+			}
+			if(isset($_FILES) && !empty($_FILES['file_transkrip']['name'])) {
+				$ext = end((explode(".", $_FILES['file_transkrip']['name'])));
+				$file_transkrip = $nip."-TRANSKRIP.".$ext;
+				$this->upload->initialize($this->set_upload_conf($nip,$file_transkrip));
+				if(!$this->upload->do_upload('file_transkrip')) {
+					$q = $this->upload->display_errors('<span class="help-block">','</span>');
+					$this->session->set_flashdata('errors',$q);
+				} else {
+					$sdata['file_transkrip'] = $file_transkrip;
+				}
+			}
+			if(isset($_FILES) && !empty($_FILES['file_skl']['name'])) {
+				$ext = end((explode(".", $_FILES['file_skl']['name'])));
+				$file_skl = $nip."-SKL.".$ext;
+				$this->upload->initialize($this->set_upload_conf($nip,$file_skl));
+				if(!$this->upload->do_upload('file_skl')) {
+					$q = $this->upload->display_errors('<span class="help-block">','</span>');
+					$this->session->set_flashdata('errors',$q);
+				} else {
+					$sdata['file_skl'] = $file_skl;
+				}
+			}
+			if(isset($_FILES) && !empty($_FILES['file_skl']['name'])) {
+				$ext = end((explode(".", $_FILES['file_skl']['name'])));
+				$file_skl = $nip."-SKL.".$ext;
+				$this->upload->initialize($this->set_upload_conf($nip,$file_skl));
+				if(!$this->upload->do_upload('file_skl')) {
+					$q = $this->upload->display_errors('<span class="help-block">','</span>');
+					$this->session->set_flashdata('errors',$q);
+				} else {
+					$sdata['file_skl'] = $file_skl;
+				}
+			}
+			if(isset($_FILES) && !empty($_FILES['file_ijazah']['name'])) {
+				$ext = end((explode(".", $_FILES['file_ijazah']['name'])));
+				$file_ijazah = $nip."-IJAZAH.".$ext;
+				$this->upload->initialize($this->set_upload_conf($nip,$file_ijazah));
+				if(!$this->upload->do_upload('file_ijazah')) {
+					$q = $this->upload->display_errors('<span class="help-block">','</span>');
+					$this->session->set_flashdata('errors',$q);
+				} else {
+					$sdata['file_ijazah'] = $file_ijazah;
+				}
+			}
+			if(isset($_FILES) && !empty($_FILES['file_transkrip_linkage']['name'])) {
+				$ext = end((explode(".", $_FILES['file_transkrip_linkage']['name'])));
+				$file_transkrip_linkage = $nip."-TRANSKRIP-LINKAGE.".$ext;
+				$this->upload->initialize($this->set_upload_conf($nip,$file_transkrip_linkage));
+				if(!$this->upload->do_upload('file_transkrip_linkage')) {
+					$q = $this->upload->display_errors('<span class="help-block">','</span>');
+					$this->session->set_flashdata('errors',$q);
+				} else {
+					$sdata['file_transkrip_linkage'] = $file_transkrip_linkage;
+				}
+			}
+			if(isset($_FILES) && !empty($_FILES['file_ijazah_linkage']['name'])) {
+				$ext = end((explode(".", $_FILES['file_ijazah_linkage']['name'])));
+				$file_ijazah_linkage = $nip."-IJAZAH-LINKAGE.".$ext;
+				$this->upload->initialize($this->set_upload_conf($nip,$file_ijazah_linkage));
+				if(!$this->upload->do_upload('file_ijazah_linkage')) {
+					$q = $this->upload->display_errors('<span class="help-block">','</span>');
+					$this->session->set_flashdata('errors',$q);
+				} else {
+					$sdata['file_ijazah_linkage'] = $file_ijazah_linkage;
+				}
+			}
+			$this->db->where('id_peserta',$_POST['id_peserta']);
+			$this->db->where('id_seleksi',$_POST['id_seleksi']);
+			$this->db->where('id_datadiri',$_POST['id_datadiri']);
+			$peserta = $this->db->get('t_alumni')->row_array();
+			if(empty($peserta)) {
+				$sdata['id_peserta'] = $_POST['id_peserta'];
+				$sdata['id_seleksi'] = $_POST['id_seleksi'];
+				$sdata['id_datadiri'] = $_POST['id_datadiri'];
+				$sdata['cdate'] = date('Y-m-d');
+				$sdata['cuid'] = $user;
+				$this->General_model->save_single('t_alumni',$sdata);
+			} else {
+				$swhere = array(
+					'id_peserta'	=> $_POST['id_peserta'],
+					'id_seleksi'	=> $_POST['id_seleksi'],
+					'id_datadiri'	=> $_POST['id_datadiri']
+				);
+				$sdata['mdate'] = date('Y-m-d');
+				$sdata['muid'] = $user;
+				$this->db->where($swhere);
+				$this->db->update('t_alumni',$sdata);
+			}
+			$this->session->set_flashdata('success','Data berhasil disimpan');
+			redirect ('ppk/pengaturan/update-kelulusan');
+		}
+
+		$data['tab_active'] = array('active','','','','','','','','','');
+		$data['content']    = 'ppk/update_kelulusan';
+
+		$data['p_css']  = array(
+			'libs/bootstrap-table/bootstrap-table.min.css',
+			'kosmo/styles/libs/bootstrap-table/bootstrap-table.min.css',
+			'libs/select2/css/select2.min.css',
+			'kosmo/styles/libs/select2/select2.min.css',
+		);
+		$data['p_js']   = array(
+			'libs/bootstrap-table/bootstrap-table.min.js',
+			'libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js',
+			'libs/bootstrap-table/extensions/export/bootstrap-table-export.min.js',
+			'libs/table-export/table-export.js',
+			'libs/select2/js/select2.min.js'
+		);
+
+		$this->load->view('main', $data);
+	}
+	function set_upload_conf($nip,$nama)
+	{
+		$config = array();
+
+		$filename = "D:\\file/$nip/$nama";
+		createDirectory($filename,true);
+
+		$config['upload_path']	= "D:\\file/$nip/";
+		$config['allowed_types']= 'jpg|png|pdf';
+		$config['overwrite'] 	= TRUE;
+		// $config['max_size'] 	= 2048;
+		//$config['file_name']	= $new_name;
+
+		return $config;
+	}
+	function preview($filename)
+	{
+		$ex	= explode('-',$filename);
+		$nip = $ex[0];
+
+		$type = explode('.',$filename);
+	
+		switch ($type[1]){
+			case 'pdf':
+				if (file_exists("D:\\file/$nip/$filename")){
+					$data = file_get_contents("D:\\file/$nip/$filename"); // Read the file's contents
+
+					$file = read_file($data); // Read the file's contents
+
+					$this->output
+				  	->set_content_type('application/pdf')
+				  	->set_output($data);
+				}else{
+					echo "File does not exists";
+				}
+			break;
+			
+			default:
+				if (file_exists("D:\\file/$nip/$filename")){
+					$data = file_get_contents("D:\\file/$nip/$filename"); // Read the file's contents
+					$this->output
+				  	->set_content_type('image/'.$type[1])
+				  	->set_output($data);
+				}else{
+					echo "File does not exists";
+				}
+			break;
+		}
+	}
+	function download($filename)
+	{
+		$this->load->helper('download');
+
+		$ex		= explode('-',$filename);
+		$nip = $ex[0];
+
+		$data = file_get_contents("D:\\file/$nip/$filename"); // Read the file's contents
+		$name = $filename;
+		force_download($name, $data);
+	}
+	public function non_gelar()
+	{
+		$data['title']      = 'Karyasiswa Non Gelar';
+		$data['pagetitle']  = 'Input Data Karyasiswa Program Non Gelar';
+		$data['menu']       = $this->menu;
+		$data['open']       = $this->open;
+
+		$nip				= $this->input->get('nip');
+		$nama				= $this->input->get('nama');
+		$instansi			= $this->input->get('instansi');
+		$kategori			= $this->input->get('kategori');
+		$program			= $this->input->get('program');
+		$diklat				= $this->input->get('diklat');
+		$prodi_pelaksana	= $this->input->get('prodi_pelaksana');
+		$gelombang_ke		= $this->input->get('gelombang_ke');
+		$tahun				= $this->input->get('tahun');
+
+		$where = array();
+
+		if(isset($nip) && !empty($nip)){
+			$where['nip'] = $nip;
+			$data['key']['nip'] = $nip;
+		}
+		if(isset($nama) && !empty($nama)){
+			$where['LOWER(nama) LIKE'] = '%'.strtolower($nama).'%';
+			$data['key']['nama'] = $nama;
+		}
+		if(isset($instansi) && !empty($instansi)){
+			$where['LOWER(instansi) LIKE'] = '%'.strtolower($instansi).'%';
+			$data['key']['instansi'] = $instansi;
+		}
+		if (isset($diklat) && !empty($diklat)) {
+			$where['LOWER(topik_diklat) LIKE'] = '%'.strtolower($diklat).'%';
+			$data['key']['diklat'] = $diklat;
+		}
+		if (isset($program) && !empty($program)) {
+			$where ['id_seleksi'] = $program;
+			$data['key']['program'] = $program;
+		}
+		if (isset($kategori) && !empty($kategori)) {
+			$where ['kategori'] = $kategori;
+			$data['key']['kategori'] = $kategori;
+		}
+		if (isset($prodi_pelaksana) && !empty($prodi_pelaksana)) {
+			$where['LOWER(prodi_pelaksana) LIKE'] = '%'.strtolower($prodi_pelaksana).'%';
+			$data['key']['prodi_pelaksana'] = $prodi_pelaksana;
+		}
+		if (isset($gelombang_ke) && !empty($gelombang_ke)) {
+			$where['gelombang_ke'] = $gelombang_ke;
+			$data['key']['gelombang_ke'] = $gelombang_ke;
+		}
+		if (isset($tahun) && !empty($tahun)) {
+			$where['tahun'] = $tahun;
+			$data['key']['tahun'] = $tahun;
+		}
+
+		$data["karyasiswa"] = $this->Pengaturan_model->get_nongelar($where)->result();
+
+		$data['tab_active'] = array('active','','','','','','','','','');
+		$data['content']    = 'ppk/input_non_gelar';
+
+		$data['p_css']  = array(
+			'libs/bootstrap-table/bootstrap-table.min.css',
+			'kosmo/styles/libs/bootstrap-table/bootstrap-table.min.css',
+			'libs/select2/css/select2.min.css',
+			'kosmo/styles/libs/select2/select2.min.css',
+		);
+		$data['p_js']   = array(
+			'libs/bootstrap-table/bootstrap-table.min.js',
+			'libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js',
+			'libs/bootstrap-table/extensions/export/bootstrap-table-export.min.js',
+			'libs/table-export/table-export.js',
+			'libs/select2/js/select2.min.js'
+		);
+
+		$this->load->view('main', $data);
+	}
+	function datadiri($id)
+	{
+		$data['title']      = 'Karyasiswa';
+		$data['pagetitle']  = 'Profil Karyasiswa';
+		$data['menu']       = $this->menu;
+		$data['open']       = $this->open;
+		$isNonGelar = false;
+		$profil	= $this->Pengaturan_model->get("id_peserta = '$id'")->row();
+		if(empty($profil)) {
+			$this->db->where("id_peserta = '$id'");
+			$this->db->order_by('tahun', 'DESC');
+			$profil = $this->db->get('view_non_gelar')->row();
+			if(!empty($profil)) $isNonGelar = true;
+		}
+
+		$data['profil']		= $profil;
+		$data['tab_active'] = array('active','','','','','','','','','');
+
+		$id_datadiri 		= $data['profil']->id_datadiri;
+		$data['datadiri']   = $this->Pengaturan_model->get_datadiri("id_datadiri = '$id_datadiri'")->row();
+
+		$data['tabs']    = 'ppk/karyasiswa_datadiri';
+		$data['content'] = !$isNonGelar ? 'ppk/karyasiswa_detail' : 'ppk/karyasiswa_detail_nongelar';
+
+		$data['p_css']   = array(
+			'kosmo/styles/profile/settings.min.css',
+			'libs/bootstrap-tabdrop/css/tabdrop.css',
+			'kosmo/styles/libs/izi-modal/izi-modal.min.css',
+			'libs/izi-modal/css/iziModal.min.css'
+		);
+		$data['p_js']    = array(
+			'libs/swiper/js/swiper.jquery.min.js',
+			'libs/bootstrap-tabdrop/js/bootstrap-tabdrop.js',
+			'libs/izi-modal/js/iziModal.min.js'
+		);
+
+		$this->load->view('main', $data);
+	}
+}
