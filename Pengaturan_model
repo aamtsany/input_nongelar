@@ -1,0 +1,114 @@
+<?php  if (! defined('BASEPATH')) {exit('No direct script access allowed');}
+	/**
+	* Name: karyasiswa_model
+	* Author: maulanaoldies
+	*
+	* Requirements: PHP5 or above
+	*
+	*/
+
+class Pengaturan_model extends CI_Model
+{
+
+	function get_nongelar($filter = null)
+	{
+		if ($filter) {
+			$this->db->where($filter);
+		}
+		$this->db->order_by('tahun', 'DESC');
+		$q = $this->db->get('view_nongelar2');
+		return $q;
+	}
+	function get_masuk($filter = NULL)
+	{
+		$this->db->select('m.id, m.id_seleksi, m.id_program, s.nama, m.id_univ, u.name AS univ, m.id_jur, j.name AS jur, m.tgl_masuk');
+		if ($filter) {
+			$this->db->where($filter);
+		}
+		$this->db->join('t_seleksi s','s.id_seleksi = m.id_seleksi');
+		$this->db->join('ts_universitas u','u.id_master = m.id_univ');
+		$this->db->join('ts_jurusan j','j.id_master = m.id_jur');
+		$this->db->order_by('m.id_seleksi', 'DESC');
+		$q = $this->db->get('s_masuk_kuliah m');
+		return $q;
+	}
+	function get($filter = null)
+	{
+		if ($filter) {
+			$this->db->where($filter);
+		}
+		$this->db->order_by('tahun', 'DESC');
+		$q = $this->db->get('view_peserta');
+		return $q;
+	}
+
+	function get_datadiri($filter = null)
+	{
+		if ($filter) {
+			$this->db->where($filter);
+		}
+		$q = $this->db->get('t_datadiri');
+		return $q;
+	}
+
+	function add_masuk($data)
+	{
+		$this->db->insert('s_masuk_kuliah',$data);
+	}
+
+	function get_univ($filter = NULL)
+	{
+		$this->db->select('*');
+		if ($filter) {
+			$this->db->where($filter);
+		}
+		$q = $this->db->get('ts_masters');
+		return $q;
+	}
+
+	function add_univ($data)
+	{
+		
+	}
+
+	function get_prodi($filter = NULL)
+	{
+		$this->db->select('*');
+		if ($filter) {
+			$this->db->where($filter);
+		}
+		$q = $this->db->get('ts_masters');
+		return $q;
+	}
+
+	function get_program($filter = NULL)
+	{
+		$this->db->select('*');
+		if ($filter) {
+			$this->db->where($filter);
+		}
+		$q = $this->db->get('view_program');
+		return $q;
+	}
+	function get_univ_ln($filter = NULL)
+	{
+		$this->db->select('a.*,b.negara,b.ibukota');
+		if ($filter) {
+			$this->db->where($filter);
+		}
+		$this->db->join('t_negara b','a.id_negara = b.id_negara');
+		$q = $this->db->get('s_univ_luarnegeri a');
+		return $q;
+	}
+	function get_prodi_ln($filter = NULL)
+	{
+		$this->db->select('a.*,b.kode,b.nama,b.kota,b.zona,c.negara,c.ibukota');
+		if ($filter) {
+			$this->db->where($filter);
+		}
+		$this->db->join('s_univ_luarnegeri b','a.id_univ = b.id_univ');
+		$this->db->join('t_negara c','b.id_negara = c.id_negara');
+		$q = $this->db->get('s_prodi_luarnegeri a');
+		return $q;
+	}
+}
